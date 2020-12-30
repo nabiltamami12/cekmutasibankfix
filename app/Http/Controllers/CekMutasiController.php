@@ -17,22 +17,33 @@ class CekMutasiController extends Controller
      */
     public function index(Request $request)
     {
-
-
+    $bulan = date("d-M-Y");
 $id_nasabah = Auth::user()->id;
-$data_report = DB::table('mutasi_nasabah')
-       ->groupBy('tanggal');
+
+// dd($bulan);
+
+
+$data_bca = DB::table('mutasi_nasabah')
+->where('id_nasabah',$id_nasabah)
+->where('bank','bca')
+       ->groupBy(['tanggal','tipe_mutasi','tanggal_diakses','nominal_mutasi'])->get();
  
-$userInput = 2;
+$data_btn = DB::table('mutasi_nasabah')
+->where('id_nasabah',$id_nasabah)
+->where('bank','btn')
+       ->groupBy(['tanggal','tipe_mutasi','tanggal_diakses','nominal_mutasi'])->take(10)->get();
+
+       $data_report = $data_bca->merge($data_btn);
+       $data_report = $data_report->sortBy('tanggal');
 
 $data = DB::table('mutasi_nasabah')
-        ->has('nominal_mutasi', '<', $userInput)
        ->groupBy(['tipe_mutasi'])
        ->select(
         DB::raw('tipe_mutasi as a'),
         DB::raw('tanggal as tanggale'),
         DB::raw('sum(nominal_mutasi) as number'))
        ->where('id_nasabah',$id_nasabah)
+       // ->havingRaw('COUNT(*) > 4')s
        ->get();
      
      $array[] = ['a', 'Number'];
@@ -41,10 +52,20 @@ $data = DB::table('mutasi_nasabah')
       $array[++$key] = [$value->a." ("."Rp " . number_format((($value->number)*1000),2,',','.').")",$value->number];
 
      }
-     $data_report = $data_report
-      ->get();
+    
+    $TotalCR = DB::table('mutasi_nasabah')
+->where('id_nasabah',$id_nasabah)
+->where('tipe_mutasi','CR')
+->get(DB::raw('SUM(nominal_mutasi) AS TotalKredit'));
+$TotalCR = substr($TotalCR,16,-2);
+    $TotalDB = DB::table('mutasi_nasabah')
+->where('id_nasabah',$id_nasabah)
+->where('tipe_mutasi','DB')
+->get(DB::raw('SUM(nominal_mutasi) AS TotalDebit'));
+$TotalDB = substr($TotalDB,15,-2);
 
-        return view('nasabah.cekmutasi',compact('mutasi_bca','mutasi_btn','data_report'))->with('data', json_encode($array));
+// dd($TotalCR);
+        return view('nasabah.cekmutasi',compact('mutasi_bca','mutasi_btn','data_report','TotalCR','TotalDB'))->with('data', json_encode($array));
 
 // dd($mutasi_bca);
 // dd($mutasi_btn);
@@ -64,23 +85,40 @@ $id_nasabah = Auth::user()->id;
    $filter = $request->search_param;
    $tanggal_mulai_cetak = $request->tanggal_mulai;
    $tanggal_akhir_cetak = $request->tanggal_akhir;
-$data_report = DB::table('mutasi_nasabah');
+$data_report = DB::table('mutasi_nasabah')->where('id_nasabah',$id_nasabah);
 
+  $TotalCR = DB::table('mutasi_nasabah')
+->where('id_nasabah',$id_nasabah)
+->where('tipe_mutasi','CR');
+
+    $TotalDB = DB::table('mutasi_nasabah')
+->where('id_nasabah',$id_nasabah)
+->where('tipe_mutasi','DB');
 
   if ($filter =='all' ) {
      $data_report = $data_report;
+      $TotalCR = $TotalCR;
+      $TotalDB = $TotalDB;
    }
  else if ($filter =='bca' ) {
      $data_report = $data_report->where('bank','bca');
+      $TotalCR = $TotalCR->where('bank','bca');
+      $TotalDB = $TotalDB->where('bank','bca');
    }
 
    else if ($filter =='btn' ) {
      $data_report = $data_report->where('bank','btn');
+     $TotalCR = $TotalCR->where('bank','btn');
+      $TotalDB = $TotalDB->where('bank','btn');
    }
    else if ($filter ==4 ) {
      if (date($request->tanggal_mulai) <= date($request->tanggal_akhir)) {
        $data_report = $data_report->whereDate('tanggal','>=',$request->tanggal_mulai);     
        $data_report = $data_report->whereDate('tanggal','<=',$request->tanggal_akhir);
+       $TotalCR = $TotalCR->whereDate('tanggal','>=',$request->tanggal_mulai);
+      $TotalDB = $TotalDB->whereDate('tanggal','>=',$request->tanggal_mulai);
+      $TotalCR = $TotalCR->whereDate('tanggal','<=',$request->tanggal_akhir);
+      $TotalDB = $TotalDB->whereDate('tanggal','<=',$request->tanggal_akhir);
      }
      else{
       return redirect()->back()->with('gagal', 'Data Tidak Ada');
@@ -99,14 +137,20 @@ $data = DB::table('mutasi_nasabah')
        ->get();
      
      $array[] = ['a', 'Number'];
-     foreach($data as $key => $value)
+   foreach($data as $key => $value)
      {
-      $array[++$key] = [$value->a." ("."Rp " . number_format((floatval($value->number))."000",2,',','.').")",$value->number];
+      $array[++$key] = [$value->a." ("."Rp " . number_format((($value->number)*1000),2,',','.').")",$value->number];
 
      }
-  $data_report = $data_report->get();
 
-        return view('nasabah.cekmutasi_filter',compact('mutasi_bca','mutasi_btn','data_report','tanggal_mulai_cetak','tanggal_akhir_cetak','filter'))->with('data', json_encode($array));
+  $data_report = $data_report->get();
+  
+  $TotalCR = $TotalCR->get(DB::raw('SUM(nominal_mutasi) AS TotalKredit'));
+  $TotalDB = $TotalDB->get(DB::raw('SUM(nominal_mutasi) AS TotalDebit'));
+$TotalCR = substr($TotalCR,16,-2);
+$TotalDB = substr($TotalDB,15,-2);
+
+        return view('nasabah.cekmutasi_filter',compact('mutasi_bca','mutasi_btn','data_report','tanggal_mulai_cetak','tanggal_akhir_cetak','filter','TotalCR','TotalDB'))->with('data', json_encode($array));
 }
 
     /**

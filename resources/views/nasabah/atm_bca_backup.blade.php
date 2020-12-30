@@ -1,23 +1,28 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Place Autocomplete</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <script
+@extends('layouts.master')
+@section('content')
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <!--   <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPs88U4569yQnXf27a8Xzuflp4zQeYF-g&callback=initMap&libraries=places&v=weekly"
       defer
-    ></script>
+    ></script> -->
+      <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSawEM5d2Vyfd8UpkXUPr1-7SsjZpX3mI&callback=initMap"
+  type="text/javascript"></script>
+    <!--  <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSawEM5d2Vyfd8UpkXUPr1-7SsjZpX3mI&callback=initMap&libraries=places&v=weekly"
+      defer
+    ></script> -->
     <style type="text/css">
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
         height: 100%;
+        /*margin-top: 5em;*/
       }
 
       /* Optional: Makes the sample page fill the window. */
       html,
       body {
-        height: 100%;
+        height: 90%;
         margin: 0;
         padding: 0;
       }
@@ -96,7 +101,7 @@
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
       function initMap() {
         const map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: -33.8688, lng: 151.2195 },
+          center: { lat: -8.219233, lng: 114.369227 },
           zoom: 13,
         });
         const card = document.getElementById("pac-card");
@@ -185,10 +190,15 @@
           });
       }
     </script>
-  </head>
-  <body>
-    <div class="pac-card" id="pac-card">
-      <div>
+        </div>
+      </div>
+      <!-- END MAIN CONTENT -->
+    <!-- </div>
+              </div> -->
+
+
+
+<!--  <div class="pac-card" id="pac-card" >
         <div id="title">Autocomplete search</div>
         <div id="type-selector" class="pac-controls">
           <input
@@ -212,16 +222,14 @@
           <input type="checkbox" id="use-strict-bounds" value="" />
           <label for="use-strict-bounds">Strict Bounds</label>
         </div>
-      </div>
       <div id="pac-container">
         <input id="pac-input" type="text" placeholder="Enter a location" />
       </div>
-    </div>
-    <div id="map"></div>
+    </div> -->
+    <div id="map" style="margin-top: 5em"></div>
     <div id="infowindow-content">
       <img src="" width="16" height="16" id="place-icon" />
       <span id="place-name" class="title"></span><br />
       <span id="place-address"></span>
     </div>
-  </body>
-</html>
+    @endsection

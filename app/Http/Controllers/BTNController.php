@@ -34,12 +34,13 @@ class BTNController extends Controller
       $jawaban1 = $request->jawaban1;
       $jawaban2 = $request->jawaban2;
       $jawaban3 = $request->jawaban3;
+   $bulan = date("d-M-Y");
 
           // echo shell_exec("python C:/xampp/htdocs/PANINGnabil/public/bca-scrapping-master/btn.py 2>&1 $username $password $jawaban1 $jawaban2 $jawaban3 $nasabah");//local
 
 $timeA =time();
 
-          echo shell_exec(public_path() . "/Python27/python.exe ". public_path() . "/bca-scrapping-master/btn.py 2>&1 $username $password $jawaban1 $jawaban2 $jawaban3 $nasabah"); //hosting
+          echo shell_exec(public_path() . "/Python27/python.exe ". public_path() . "/bca-scrapping-master/btn.py 2>&1 $username $password $jawaban1 $jawaban2 $jawaban3 $nasabah $bulan"); //hosting
 // dd($timeA);
 $timeB = time();
 // dd($timeB);
@@ -51,10 +52,11 @@ $interval = $timeB-$timeA;
 // $hasilTime = $timeB - $timeA;
 // $Hasil = floor($hasilTime / (24 * 60 * 60 )); 
 // dd($Hasil);
+// echo substr("Hello world",0,-2)."<br>";
 
 if ($interval>=30) {
 
-   $url_btn = public_path() . "/".$nasabah."_data_btn_new.json"; // ie: /var/www/laravel/app/storage/$url_btn = 'storage/json/es/noticia.json';
+   $url_btn = public_path() . "/".$bulan."_".$nasabah."_data_btn_new.json"; // ie: /var/www/laravel/app/storage/$url_btn = 'storage/json/es/noticia.json';
    $datos_btn = file_get_contents($url_btn);
    $data_btn = json_decode($datos_btn, true);
 
@@ -70,7 +72,7 @@ if ($interval>=30) {
     $dbname = "CekMutasi-Database";
     $tanggal = strtr($d[0], '/', '-');
     $tanggal = date('d-m-Y',strtotime($tanggal));
-    $tanggal = date("Y-m-d",strtotime($tanggal));
+    // $tanggal = date("Y-m-d",strtotime($tanggal));
     $tanggal_diakses = date("Y-m-d");
 
 // Create connection
@@ -82,12 +84,23 @@ if ($interval>=30) {
    // else{
    //   $sql =  "INSERT INTO mutasi_btn (tanggal,nominal_mutasi,tipe_mutasi,total,bank,tanggal_diakses,id_nasabah) VALUES ('$tanggal','$d[3]','$d[5]','$d[4]','btn','$tanggal_diakses','$nasabah')";
    // }
+    // echo $d[0];
+    $a = $d[3];
+    $asu = substr($a,9);
+    $asu2 = substr($a,10);
+    // dd($asu);
+if ( $asu == "CR" || $asu2 == "CR") {
 
- if ($d[5]=="DB") {
-      $sql =  "INSERT INTO mutasi_nasabah (tanggal,nominal_mutasi,tipe_mutasi,total,bank,tanggal_diakses,id_nasabah) VALUES ('$tanggal','$d[2]','$d[5]','$d[4]','btn','$tanggal_diakses','$nasabah')";
+     $ds = substr($d[3],0,-2);
+     // dd($d[1]);
+
+ // if ($d[5]=="DB") {
+      $sql =  "INSERT INTO mutasi_nasabah (tanggal,nominal_mutasi,tipe_mutasi,total,bank,tanggal_diakses,id_nasabah) VALUES ('$tanggal','$ds','CR','$d[4]','btn','$tanggal_diakses','$nasabah')";
     }
    else{
-     $sql =  "INSERT INTO mutasi_nasabah (tanggal,nominal_mutasi,tipe_mutasi,total,bank,tanggal_diakses,id_nasabah) VALUES ('$tanggal','$d[3]','$d[5]','$d[4]','btn','$tanggal_diakses','$nasabah')";
+     $ds = substr($d[2],0,-2);
+
+     $sql =  "INSERT INTO mutasi_nasabah (tanggal,nominal_mutasi,tipe_mutasi,total,bank,tanggal_diakses,id_nasabah) VALUES ('$tanggal','$ds','DB','$d[4]','btn','$tanggal_diakses','$nasabah')";
    }
 
     if (!$conn) {

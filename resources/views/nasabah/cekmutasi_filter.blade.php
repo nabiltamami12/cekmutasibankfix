@@ -1,10 +1,8 @@
 @extends('layouts.master')
 @section('content')
 <!-- MAIN -->
-    <div class="main">
-      <!-- MAIN CONTENT -->
-      <div class="main-content">
-        <div class="container-fluid">
+  <title>Cek Mutasi</title>
+
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.bootstrap.min.css">
@@ -25,41 +23,25 @@
         new $.fn.dataTable.FixedHeader( table );
     });
 </script>
-  @if (session('berhasil'))
-    <div class="alert" role="alert" id="myAlert">
-        <div class="col-sm-12">
-            <div class="alert  alert-success alert-dismissible fade show" role="alert">
-                <span class="badge badge-pill badge-success"></span> {{ session('alert') }}
-                <button type="button" onclick="closeAlert()" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
+    <div class="main">
+      <!-- MAIN CONTENT -->
+      <div class="main-content">
+        <div class="container-fluid">
 
-      @if (session('gagal'))
-    <div class="alert" role="alert" id="myAlert">
-        <div class="col-sm-12">
-            <div class="alert  alert-danger alert-dismissible fade show" role="alert">
-                <span class="badge badge-pill badge-danger"></span> {{ session('alert') }}
-                <button type="button" onclick="closeAlert()" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
+ 
+
                   <!-- <h3 class="panel-title">Pengguna : {{ Auth::user()->name }} </h3>
                   <br> -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" rel="stylesheet"/>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+                
+<div id="pie_chart"></div>
+ 
+      
 
     <div class="container">
+ 
         <div class="row">
                 <form action="{{url('/cekmutasiku/filter')}}" method="get"  class="input-group">
-                    
+                       
                     <div class="input-group-btn search-panel" style="background-color:  none;">
                         <select name="search_param" id="search_param" class="btn btn-default dropdown-toggle" data-toggle="dropdown"  onchange="showDiv(this)">
                             <option value="all">All</option>
@@ -70,7 +52,7 @@
                     </div>
         
                     <span class="input-group-btn" >
-                        <button class="btn btn-default" type="submit" style="margin-left:  -46em">
+                        <button class="btn btn-default" type="submit" style="margin-left:  -35.2em">
                            <span class="glyphicon glyphicon-search"></span>
                         </button>
                     </span>
@@ -97,24 +79,20 @@
 
         </script>   
 
-                    <div>
+                       <div>
    <form action="{{url('/mutasi/unduh_pdf/database')}}" method="get">
                       <button type="submit" style="color: #a11023; border: none; float: right;background: none" >
                         <i class="fa fa-file-pdf fa-2x"></i>
 
                       </button>
-                      <input type="text" name="filter" value="{{$filter}}" style="display: none;" >
-                    <input type="text" name="tanggal_mulai" value="{{$tanggal_mulai_cetak}}" style="display: none;" >
-                    <input type="text" name="tanggal_akhir" value="{{$tanggal_akhir_cetak}}" style="display: none;" >
+                     
                     </form>
                     <form action="{{url('/mutasi/unduh_excel/database')}}" method="get">
                       <button type="submit" style="color: #00610b;float: right; border: none; background: none;" >
                         <i class="fa fa-file-excel fa-2x"></i>
 
                       </button>
-                        <input type="text" name="filter" value="{{$filter}}" style="display: none;" >
-                    <input type="text" name="tanggal_mulai_excel" value="{{$tanggal_mulai_cetak}}" style="display: none;" >
-                    <input type="text" name="tanggal_akhir_excel" value="{{$tanggal_akhir_cetak}}" style="display: none;" >
+                       
                     </form>
                     </div>
    <!--  <label><input type="radio" name="colorRadio" value="bca"> bca</label>
@@ -126,7 +104,16 @@
   <li><input type="button" id="btnFilter" value="Filter"></li> -->
   
 <div class="panel-body" id="container">
-
+ @if(session('alert'))
+    <div class="alert" role="alert" id="myAlert">
+            <div class="alert  alert-danger alert-dismissible fade show" role="alert">
+                <span class="badge badge-pill badge-danger"></span> {{ session('alert') }}
+                <button type="button" onclick="closeAlert()" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+    </div>
+    @endif
                   <table id="example" class="display nowrap table-striped table-bordered table" style="width:100%">
                         <!-- <div class="col-lg-1 col-xs-2 thumbnail" style="margin-left: 30em"><img src="bca.png" /></div>
                           
@@ -172,7 +159,17 @@
                     
                   </table>
                 
+<tr>
+   
+  <h4>Total Kredit : Rp. {{number_format((($TotalCR)*1000),2,',','.')}}</h4>
+ 
 
+</tr>
+<tr>
+   
+  <h4>Total Debit : Rp. {{number_format((($TotalDB)*1000),2,',','.')}}</h4>
+
+</tr>
                 </div>
 <!--    <script src="{{asset('js/Chart.js')}}"></script>
   <style type="text/css">
@@ -202,7 +199,6 @@
                           </div>
             </div>
           </div> -->
-<div id="pie_chart"></div>
 
         </div>
       </div>

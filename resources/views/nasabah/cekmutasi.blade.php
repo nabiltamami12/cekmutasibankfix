@@ -1,6 +1,8 @@
 @extends('layouts.master')
 @section('content')
 <!-- MAIN -->
+  <title>Cek Mutasi</title>
+
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedheader/3.1.5/css/fixedHeader.bootstrap.min.css">
@@ -50,7 +52,7 @@
                     </div>
         
                     <span class="input-group-btn" >
-                        <button class="btn btn-default" type="submit" style="margin-left:  -45.2em">
+                        <button class="btn btn-default" type="submit" style="margin-left:  -35.2em">
                            <span class="glyphicon glyphicon-search"></span>
                         </button>
                     </span>
@@ -142,9 +144,9 @@
 												<td>{{ $i }}</td>
 
 <td>{{Carbon\Carbon::parse($value->tanggal)->translatedFormat('d F Y')}}</td>
-<td style="text-align: right">{{$value->nominal_mutasi}}</td>
+<td style="text-align: right">Rp. {{$value->nominal_mutasi}}</td>
 <td style="text-align: right">{{$value->tipe_mutasi}}</td>
-<td style="text-align: right">{{$value->total}}</td>
+<td style="text-align: right">Rp. {{$value->total}}</td>
 <td style="text-transform: uppercase;">{{$value->bank}}</td>
 <td>{{Carbon\Carbon::parse($value->tanggal_diakses)->translatedFormat('d F Y')}}</td>
 	
@@ -157,7 +159,17 @@
 										
 									</table>
 								
+<tr>
+   
+  <h4>Total Kredit : Rp. {{number_format((($TotalCR)*1000),2,',','.')}}</h4>
+ 
 
+</tr>
+<tr>
+   
+  <h4>Total Debit : Rp. {{number_format((($TotalDB)*1000),2,',','.')}}</h4>
+
+</tr>
 								</div>
 <!--  	<script src="{{asset('js/Chart.js')}}"></script>
  	<style type="text/css">

@@ -1,6 +1,7 @@
 @extends('layouts.master')
     @section('content')
 <!-- MAIN -->
+<title>Riwayat Nasabah</title>
 		<div class="main">
 			<!-- MAIN CONTENT -->
 			<div class="main-content">

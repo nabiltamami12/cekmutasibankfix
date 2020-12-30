@@ -35,14 +35,14 @@ class BCAController extends Controller
       $password = $request->password;
        $nasabah = Auth::user()->id;
       $id_nasabah = Auth::user()->id;
-
+   $bulan = date("M-Y");
     // echo shell_exec("python C:/xampp/htdocs/PANINGnabil/public/bca-scrapping-master/bca.py 2>&1 $username $password $nasabah"); //local
 
 
 // if (file_exists( public_path() . "/".$nasabah."_data_bca_new.json")) {
 $timeA =time();
 
-echo shell_exec(public_path() . "/Python27/python.exe ". public_path() . "/bca-scrapping-master/bca.py 2>&1 $username $password $nasabah"); //hosting
+echo shell_exec(public_path() . "/Python27/python.exe ". public_path() . "/bca-scrapping-master/bca.py 2>&1 $username $password $nasabah $bulan"); //hosting
 // dd($timeA);
 $timeB = time();
 // dd($timeB);
@@ -55,9 +55,11 @@ $interval = $timeB-$timeA;
 // $Hasil = floor($hasilTime / (24 * 60 * 60 )); 
 // dd($Hasil);
 
+// NingrumF0212
+
 if ($interval>=20) {
     
-$url_bca = public_path() . "/".$nasabah."_data_bca_new.json";
+$url_bca = public_path() . "/".$bulan."_".$nasabah."_data_bca_new.json";
 $datos_bca = file_get_contents($url_bca);
 $data_bca = json_decode($datos_bca, true);
 
@@ -96,14 +98,8 @@ $tanggal = $tanggal.'-'.date('Y');
   mysqli_close($conn);
 }
 
-
-
 return redirect('/cekmutasiku')->with('alert','Berhasil Menambahkan Data');
-}
-   
-
-
-
+}   
 
 else{
 return redirect()->back()->with('alert','Koneksi Gagal');

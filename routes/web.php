@@ -42,6 +42,15 @@ Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
 // });
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('atm-bca', function () {
-    return view('nasabah.atm_bca');
+// Route::get('atm-bca', function () {
+//     return view('nasabah.atm_bca_backup');
+// });
+// Route::get('atm', function () {
+//     return view('nasabah.atm');
+// });
+Route::get('atm', function () {
+    return view('nasabah.atm_new');
 });
+// Route::get('atm', function () {
+//     return view('nasabah.atm-terdekat');
+// });

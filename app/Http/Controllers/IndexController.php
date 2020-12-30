@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Auth;
+use App\User;
 class IndexController extends Controller
 {
     /**
@@ -11,9 +12,17 @@ class IndexController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+       public function index(Request $request)
     {
+        if (Auth::user()->role=="nasabah") {
         return view('nasabah.index');
+            
+        }
+        else{
+         $data = User::all();
+        
+        return view('admin.riwayat',compact('data'));
+}
     }
 
     /**
